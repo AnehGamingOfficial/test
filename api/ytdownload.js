@@ -1,7 +1,7 @@
 const ytdl = require('ytdl-core');
 
 export default async function handler(req, res) {
-  const { videoUrl } = req.query; // Get video URL from the query parameter
+  const { videoUrl } = req.query;
 
   if (!videoUrl) {
     return res.status(400).json({ error: 'No video URL provided' });
@@ -17,7 +17,10 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Could not retrieve download link.' });
     }
   } catch (error) {
-    console.error('Error details:', error); // Log the error details
+    if (error.statusCode === 410) {
+      return res.status(410).json({ error: 'The requested video is no longer available (Status 410).' });
+    }
+    console.error('Error details:', error);
     return res.status(500).json({ error: 'An error occurred while processing the video.', details: error.message });
   }
 }
