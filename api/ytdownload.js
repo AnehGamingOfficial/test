@@ -17,6 +17,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Could not retrieve download link.' });
     }
   } catch (error) {
-    return res.status(500).json({ error: 'An error occurred while processing the video.' });
+    console.error('Error details:', error); // Log the error details
+    return res.status(500).json({ error: 'An error occurred while processing the video.', details: error.message });
   }
 }
