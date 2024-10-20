@@ -2,7 +2,7 @@ const ytdl = require('ytdl-core');
 
 export default async function handler(req, res) {
   // Add CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');  // Allow all origins
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Download link not found' });
     }
   } catch (error) {
+    console.error('Error fetching download link:', error); // Log the error details
     return res.status(500).json({ error: 'Error fetching download link' });
   }
 }
