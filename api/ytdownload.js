@@ -1,14 +1,6 @@
-const ytdl = require('ytdl-core');
-
-export default async function handler(req, res) {
-  const { videoUrl } = req.query;
-
-  if (!videoUrl) {
-    return res.status(400).json({ error: 'No video URL provided' });
-  }
-
-  try {
+try {
     const info = await ytdl.getInfo(videoUrl);
+    console.log(info); // Log the full info object for analysis
     const format = ytdl.chooseFormat(info.formats, { quality: 'highestvideo', filter: 'videoandaudio' });
 
     if (format && format.url) {
@@ -16,11 +8,7 @@ export default async function handler(req, res) {
     } else {
       return res.status(500).json({ error: 'Could not retrieve download link.' });
     }
-  } catch (error) {
-    if (error.statusCode === 410) {
-      return res.status(410).json({ error: 'The requested video is no longer available (Status 410).' });
-    }
+} catch (error) {
     console.error('Error details:', error);
     return res.status(500).json({ error: 'An error occurred while processing the video.', details: error.message });
-  }
 }
