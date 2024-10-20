@@ -1,25 +1,22 @@
-const readline = require('readline');
 const ytdl = require('ytdl-core');
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+export default async function handler(req, res) {
+  const { videoUrl } = req.query; // Get video URL from the query parameter
 
-rl.question('Entrez le lien de la vidéo YouTube : ', async (videoUrl) => {
+  if (!videoUrl) {
+    return res.status(400).json({ error: 'No video URL provided' });
+  }
+
   try {
     const info = await ytdl.getInfo(videoUrl);
     const format = ytdl.chooseFormat(info.formats, { quality: 'highestvideo', filter: 'videoandaudio' });
 
     if (format && format.url) {
-      console.log('Voici le lien de téléchargement direct :');
-      console.log(format.url);
+      return res.status(200).json({ downloadUrl: format.url });
     } else {
-      console.log("Impossible d'obtenir le lien de téléchargement.");
+      return res.status(500).json({ error: 'Could not retrieve download link.' });
     }
   } catch (error) {
-    console.error('Une erreur est survenue :', error);
-  } finally {
-    rl.close();
+    return res.status(500).json({ error: 'An error occurred while processing the video.' });
   }
-});
+}
